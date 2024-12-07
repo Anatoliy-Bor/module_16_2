@@ -1,0 +1,36 @@
+from fastapi import FastAPI
+from typing import Annotated
+from fastapi import Path
+
+app = FastAPI()
+
+
+@app.get("/")
+async def read_root() -> dict:
+    return {"msg":"Главная страница !"}
+
+@app.get("/user/admin")
+async def read_admin() -> dict:
+    return {"msg":"Вы зашли как администратор !"}
+
+@app.get("/user/{user_id}")
+async def get_user(user_id: int = Path(ge=1, le=100, description="Enter User ID", example="13")) -> dict:
+    return {"msg":f"Вы вошли как пользователь № {user_id}"}
+
+@app.get("/id")
+async def tak_user(username: str, age: int) -> dict:
+    return {"User": username, "Age": age}
+
+
+#@app.get("/users/{user_id}")
+#async def get_user(user_id: Annotated[int, Path(gt=0, title="User ID", description="The ID must be a positive integer")]):
+#	return {"user_id": user_id}
+
+#@app.get("/items/{item_id}")
+#async def read_item(item_id: int = Path(..., title="ID of the item")):
+#	return {"item_id": item_id}
+
+@app.get("/user/{username}/{age}")
+async def welcome(username: Annotated[str, Path(min_length=5, max_length=20, description="Enter username", example="UrbanName")],
+                  age: int = Path(ge=18, le=120, description=" Enter age", example="40")) -> dict:
+    return {"msg": f"Информация о пользователе. Имя: {username}, возраст: {age}"}
